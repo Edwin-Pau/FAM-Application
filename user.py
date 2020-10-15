@@ -5,7 +5,7 @@ such as the user's name, age, budget, account, and user type.
 from __future__ import annotations
 
 from account import Account, BankAccount
-from budget import BudgetManager
+from budget import BudgetManager, Budget
 from transaction import TransactionManager
 
 
@@ -127,3 +127,48 @@ class User:
 
         return new_user
 
+    def update_lock_status(self):
+        lock_threshold = self.tx_manager.lock_threshold
+        num_categories_locked = 0
+        for budget in self.budget_manager:
+
+            budget_threshold = budget.amount_spent / budget.amount_total
+            if lock_threshold and budget_threshold > lock_threshold:
+                budget.lock_budget()
+
+            if budget.locked_status:
+                num_categories_locked += 1
+
+        self._update_account_lock_status(num_categories_locked)
+
+    def _update_account_lock_status(self, num_categories_locked: int):
+        max_locked_budgets = self.tx_manager.max_locked_budgets
+        if max_locked_budgets and num_categories_locked >= max_locked_budgets:
+            self.account.locked_status = True
+            self.account.issue_locked_warning()
+
+    def check_and_issue_user_warnings(self, current_budget: Budget):
+        warning_threshold = self.tx_manager.warning_threshold
+        persistent_warning = self.tx_manager.persistent_warning
+        budget_category_str = current_budget.budget_category.value
+        issue_warning = False
+        issue_notification = False
+
+        if persistent_warning:
+            for budget in self.budget_manager:
+                budget_threshold = budget.amount_spent / budget.amount_total
+
+                if budget_threshold > warning_threshold:
+                    issue_warning = True
+
+        if current_budget.locked_status:
+            issue_warning = True
+
+        if current_budget.amount_spent / current_budget.amount_total > 1:
+            issue_notification = True
+
+        if issue_warning:
+            self.tx_manager.issue_warning(budget_category_str)
+
+        if issue_notification:
+            self.tx_manager.issue_notification(budget_category_str)

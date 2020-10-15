@@ -11,7 +11,7 @@ from user import User
 USER_TEST_DATA = {
     "name": "Edwin Pau",
     "age": "31",
-    "user_type": "1",
+    "user_type": "3",
     "bank_account_number": "A01074676",
     "bank_name": "TD Bank",
     "bank_balance": "5000",
@@ -151,7 +151,7 @@ class Driver:
         validated_tx, error_msg = self.validate_transaction_record(new_tx,
                                                                    budget)
         if not validated_tx:
-            print("\nUnable to record transaction:")
+            print("\nWarning: Unable to record transaction!")
             print(error_msg)
             print(f"{self.user.account}\n")
             print(budget)
@@ -161,11 +161,14 @@ class Driver:
         budget.add_amount_spent(new_tx.tx_amount)
         self.user.account.add_amount_spent(new_tx.tx_amount)
         self.user.tx_manager.add_transaction(new_tx)
+        self.user.update_lock_status()
         print("\nSuccessfully recorded the following transaction:")
         print(new_tx)
         print("\nTransaction has been recorded under the following budget "
               "category:")
         print(budget)
+
+        self.user.check_and_issue_user_warnings(budget)
 
     def view_transactions(self):
         """
@@ -206,26 +209,33 @@ class Driver:
 
     def validate_transaction_record(self, new_tx: Transaction,
                                     budget: Budget) -> (bool, str):
-        validated_tx = False
+        budget_threshold = self.user.tx_manager.lock_threshold
+        validated_tx = True
         error_msg = ""
 
         # Perform the various checks
+        # Can refactor in the future using chain of responsibility
         if self.user.account.locked_status:
             error_msg = error_msg + "  The account has been locked out " \
                                     "completely for exceeding the budgets " \
                                     "in two categories!\n"
+            validated_tx = False
 
         if budget.locked_status:
             error_msg = error_msg + "  The budget category for the " \
                                     "transaction entered is locked!\n"
+            validated_tx = False
 
-        if new_tx.tx_amount > budget.calc_current_amount():
-            error_msg = error_msg + "  Insufficient budget available for " \
-                                    "the category selected!\n"
+        if budget_threshold and \
+           new_tx.tx_amount > budget.amount_total * budget_threshold:
+            error_msg = error_msg + "  Exceeded allowable budget available " \
+                                    "for the category selected!\n"
+            validated_tx = False
 
         if new_tx.tx_amount > self.user.account.current_balance:
             error_msg = error_msg + "  Insufficient bank balance available " \
                                     "to complete the transaction!\n"
+            validated_tx = False
 
         return validated_tx, error_msg
 

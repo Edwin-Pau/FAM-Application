@@ -72,6 +72,14 @@ class BankAccount(Account):
         """
         self.current_balance -= amount_spent
 
+    @staticmethod
+    def issue_locked_warning(self):
+        """
+        Initializes a BudgetCategory object.
+        """
+        print("\nWARNING: Your bank account has been completely locked"
+              "out for exceeding 2 or more categories!")
+
     def __str__(self):
         formatted_str = f"  Account Number: {self.account_number}\n"\
                         f"  Bank Name: {self.bank_name}\n"\

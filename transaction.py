@@ -74,6 +74,14 @@ class TransactionManager(ABC):
 
         return tx_mgr
 
+    @abstractmethod
+    def issue_warning(self, budget_str: str):
+        pass
+
+    @abstractmethod
+    def issue_notification(self, budget_str: str):
+        pass
+
 
 class TransactionManagerIterator:
     """
@@ -85,7 +93,7 @@ class TransactionManagerIterator:
         """"
         Initializes a CardIterator object that is used to iterate
         over the Wallet class's dictionary of Card objects.
-        :param wallet: an object of type Wallet
+        :param
         """
         self.tx_dict = tx_mgr.transaction_records
         self.curr_index = 0
@@ -247,6 +255,18 @@ class AngelTransactionManager(TransactionManager):
         Initializes an AngelTransactionManager object.
         """
         super().__init__()
+        self.lock_threshold = None
+        self.warning_threshold = 0.9
+
+    def issue_warning(self, budget_str: str):
+        print(f"\nWarning: You have exceeded more than "
+              f"{self.warning_threshold * 100}% in the {budget_str} "
+              f"budget category!")
+
+    def issue_notification(self, budget_str: str):
+        print(f"\nNotification: Budget category {budget_str} exceeded!\n"
+              "You should use the main menu to review your budget "
+              "allowance in each category.")
 
 
 class TroublemakerTransactionManager(TransactionManager):
@@ -268,6 +288,18 @@ class TroublemakerTransactionManager(TransactionManager):
         Initializes an AngelTransactionManager object.
         """
         super().__init__()
+        self.lock_threshold = 1.2
+        self.warning_threshold = 0.75
+
+    def issue_warning(self, budget_str: str):
+        print(f"\nWarning: You have exceeded more than "
+              f"{self.warning_threshold * 100}% in the {budget_str} "
+              f"budget category!")
+
+    def issue_notification(self, budget_str: str):
+        print(f"\nNotification: Budget category {budget_str} exceeded!\n"
+              "You should use the main menu to review your budget "
+              "allowance in each category.")
 
 
 class RebelTransactionManager(TransactionManager):
@@ -289,4 +321,19 @@ class RebelTransactionManager(TransactionManager):
         Initializes an AngelTransactionManager object.
         """
         super().__init__()
+        self.lock_threshold = 1
+        self.warning_threshold = 0.5
+        self.max_locked_budgets = 2
+        self.persistent_warning = True
 
+    def issue_warning(self, budget_str: str):
+        print(f"\nWarning: You have exceeded more than "
+              f"{self.warning_threshold * 100}% in the {budget_str} "
+              f"budget category!")
+
+    def issue_notification(self, budget_str: str):
+        print("\n" + "@" * 80)
+        print(f"Notification: Budget category {budget_str} exceeded!\n"
+              "You should use the main menu to review your budget "
+              "allowance in each category.")
+        print("@" * 80)

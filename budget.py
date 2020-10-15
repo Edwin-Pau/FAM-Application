@@ -98,7 +98,7 @@ class BudgetManagerIterator:
         """"
         Initializes a CardIterator object that is used to iterate
         over the Wallet class's dictionary of Card objects.
-        :param wallet: an object of type Wallet
+        :param
         """
         self.budget_dict = budget_mgr.budget_dict
         self.curr_index = 0
