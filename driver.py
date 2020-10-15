@@ -7,6 +7,7 @@ from menu import Menu
 from transaction import TransactionManager, Transaction
 from budget import BudgetManager, Budget
 from user import User
+from rich import print
 
 USER_TEST_DATA = {
     "name": "Edwin Pau",
@@ -151,7 +152,7 @@ class Driver:
         validated_tx, error_msg = self.validate_transaction_record(new_tx,
                                                                    budget)
         if not validated_tx:
-            print("\nWarning: Unable to record transaction!")
+            print("\n[red]Warning:[/red] Unable to record transaction!")
             print(error_msg)
             print(f"{self.user.account}\n")
             print(budget)

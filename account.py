@@ -2,8 +2,8 @@
 This module contains the Account classes that contains the various
 data regarding the user's account, such as a bank account.
 """
-
 from abc import ABC, abstractmethod
+from rich import print
 
 
 class Account(ABC):
@@ -77,8 +77,8 @@ class BankAccount(Account):
         """
         Initializes a BudgetCategory object.
         """
-        print("\nWARNING: Your bank account has been completely locked"
-              "out for exceeding 2 or more categories!")
+        print("\n[red]Warning:[/red] Your bank account has been completely "
+              "locked out for exceeding 2 or more categories!")
 
     def __str__(self):
         formatted_str = f"  Account Number: {self.account_number}\n"\

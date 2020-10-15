@@ -5,6 +5,7 @@ manage users' transactions.
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from datetime import datetime
+from rich import print
 
 
 class TransactionManager(ABC):
@@ -190,8 +191,8 @@ class Transaction:
                 data = input(f"Enter the {value}")
 
                 if key == "tx_amount" and float(data) < 0:
-                    print("Please ensure the transaction amount is greater "
-                          "than or equal to zero and try again.")
+                    print("[red]Please ensure the transaction amount is "
+                          "greater than or equal to zero and try again.[/red]")
                     input_valid = False
                 else:
                     input_valid = True
@@ -259,12 +260,13 @@ class AngelTransactionManager(TransactionManager):
         self.warning_threshold = 0.9
 
     def issue_warning(self, budget_str: str):
-        print(f"\nWarning: You have exceeded more than "
+        print(f"\n[red]Warning:[/red] You have exceeded more than "
               f"{self.warning_threshold * 100}% in the {budget_str} "
               f"budget category!")
 
     def issue_notification(self, budget_str: str):
-        print(f"\nNotification: Budget category {budget_str} exceeded!\n"
+        print(f"\n[red]Notification:[/red] Budget category {budget_str} "
+              f"exceeded!\n"
               "You should use the main menu to review your budget "
               "allowance in each category.")
 
@@ -292,12 +294,13 @@ class TroublemakerTransactionManager(TransactionManager):
         self.warning_threshold = 0.75
 
     def issue_warning(self, budget_str: str):
-        print(f"\nWarning: You have exceeded more than "
+        print(f"\n[red]Warning:[/red] You have exceeded more than "
               f"{self.warning_threshold * 100}% in the {budget_str} "
               f"budget category!")
 
     def issue_notification(self, budget_str: str):
-        print(f"\nNotification: Budget category {budget_str} exceeded!\n"
+        print(f"\n[red]Notification:[/red] Budget category {budget_str} "
+              f"exceeded!\n"
               "You should use the main menu to review your budget "
               "allowance in each category.")
 
@@ -327,13 +330,14 @@ class RebelTransactionManager(TransactionManager):
         self.persistent_warning = True
 
     def issue_warning(self, budget_str: str):
-        print(f"\nWarning: You have exceeded more than "
+        print(f"\n[red]Warning:[/red] You have exceeded more than "
               f"{self.warning_threshold * 100}% in the {budget_str} "
               f"budget category!")
 
     def issue_notification(self, budget_str: str):
-        print("\n" + "@" * 80)
-        print(f"Notification: Budget category {budget_str} exceeded!\n"
+        print("\n" + "[red]@[/red]" * 80)
+        print(f"[red]Notification:[/red] Budget category {budget_str} "
+              f"exceeded!\n"
               "You should use the main menu to review your budget "
               "allowance in each category.")
-        print("@" * 80)
+        print("[red]@[/red]" * 80)

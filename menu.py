@@ -3,6 +3,7 @@ This module contains the Menu class that displays and prompts the user
 with menu options and returns the user choices back to the driver
 module to process the user's requests.
 """
+from rich import print
 
 
 class Menu:
@@ -20,7 +21,7 @@ class Menu:
     @staticmethod
     def prompt_startup_menu():
         print("\n" + "-" * 30)
-        print("Welcome to F.A.M.")
+        print("[bold magenta]Welcome to F.A.M.[/bold magenta]")
         print("-" * 30)
         print("Please select an option to register a user:")
         print("  1. Create a new user")
@@ -32,13 +33,13 @@ class Menu:
             try:
                 user_choice = int(input("Enter your choice: "))
             except ValueError as e:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             if not 1 <= user_choice <= 3:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             return user_choice
@@ -49,7 +50,7 @@ class Menu:
         Displays the main menu and prompts the user for a choice.
         """
         print("\n" + "-" * 30)
-        print("F.A.M. Main Menu")
+        print("[bold magenta]F.A.M. Main Menu[/bold magenta]")
         print("-" * 30)
         print("  1. View Budgets")
         print("  2. Record a Transaction")
@@ -62,13 +63,13 @@ class Menu:
             try:
                 user_choice = int(input("Enter your choice: "))
             except ValueError as e:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             if not 1 <= user_choice <= 5:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             return user_choice
@@ -79,7 +80,7 @@ class Menu:
         Displays the budget selection to view transactions.
         """
         print("\n" + "-" * 30)
-        print("View Budgets")
+        print("[bold magenta]View Budgets[/bold magenta]")
         print("-" * 30)
 
     @staticmethod
@@ -88,7 +89,7 @@ class Menu:
         Displays the budget selection to view transactions.
         """
         print("\n" + "-" * 30)
-        print("Record a Transaction")
+        print("[bold magenta]Record a Transaction[/bold magenta]")
         print("-" * 30)
 
     @staticmethod
@@ -97,7 +98,7 @@ class Menu:
         Displays the budget selection to view transactions.
         """
         print("\n" + "-" * 30)
-        print("View Transactions by Budget")
+        print("[bold magenta]View Transactions by Budget[/bold magenta]")
         print("-" * 30)
         print("  1. Games and Entertainment")
         print("  2. Clothing and Accessories")
@@ -110,13 +111,13 @@ class Menu:
             try:
                 user_choice = int(input("Enter your choice: "))
             except ValueError as e:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             if not 1 <= user_choice <= 5:
-                print("Invalid choice entered. Please enter a valid "
-                      "choice.")
+                print("[red]Invalid choice entered. Please enter a valid "
+                      "choice.[/red]")
                 continue
 
             return user_choice
@@ -127,5 +128,5 @@ class Menu:
         Displays the budget selection to view transactions.
         """
         print("\n" + "-" * 30)
-        print("View Bank Account Details")
+        print("[bold magenta]View Bank Account Details[/bold magenta]")
         print("-" * 30)
