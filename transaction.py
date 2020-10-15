@@ -258,6 +258,8 @@ class AngelTransactionManager(TransactionManager):
         super().__init__()
         self.lock_threshold = None
         self.warning_threshold = 0.9
+        self.max_locked_budgets = None
+        self.persistent_warning = False
 
     def issue_warning(self, budget_str: str):
         print(f"\n[red]Warning:[/red] You have exceeded more than "
@@ -292,6 +294,8 @@ class TroublemakerTransactionManager(TransactionManager):
         super().__init__()
         self.lock_threshold = 1.2
         self.warning_threshold = 0.75
+        self.max_locked_budgets = None
+        self.persistent_warning = False
 
     def issue_warning(self, budget_str: str):
         print(f"\n[red]Warning:[/red] You have exceeded more than "
