@@ -135,7 +135,7 @@ class Menu:
             return user_choice
 
     @staticmethod
-    def prompt_view_bank_account_details():
+    def prompt_view_bank_account_details() -> None:
         """
         Displays the View Bank Account details header.
         """

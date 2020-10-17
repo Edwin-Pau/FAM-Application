@@ -206,7 +206,7 @@ class Budget:
         """
         self.locked_status = True
 
-    def add_amount_spent(self, amount_spent: float):
+    def add_amount_spent(self, amount_spent: float) -> None:
         """
         Adds an amount to the amount spent in the budget object.
 

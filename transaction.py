@@ -321,7 +321,7 @@ class TroublemakerTransactionManager(TransactionManager):
         self.max_locked_budgets = None
         self.persistent_warning = False
 
-    def issue_warning(self, budget_str: str):
+    def issue_warning(self, budget_str: str) -> None:
         """
         Issues a warning to the user when they've exceeded the
         warning threshold.
@@ -332,7 +332,7 @@ class TroublemakerTransactionManager(TransactionManager):
               f"{self.warning_threshold * 100}% in the {budget_str} "
               f"budget category!")
 
-    def issue_notification(self, budget_str: str):
+    def issue_notification(self, budget_str: str) -> None:
         """
         Issues a notification to the user when they've exceeded the
         budget limit.
@@ -361,7 +361,7 @@ class RebelTransactionManager(TransactionManager):
         self.max_locked_budgets = 2
         self.persistent_warning = True
 
-    def issue_warning(self, budget_str: str):
+    def issue_warning(self, budget_str: str) -> None:
         """
         Issues a warning to the user when they've exceeded the
         warning threshold.
@@ -372,7 +372,7 @@ class RebelTransactionManager(TransactionManager):
               f"{self.warning_threshold * 100}% in the {budget_str} "
               f"budget category!")
 
-    def issue_notification(self, budget_str: str):
+    def issue_notification(self, budget_str: str) -> None:
         """
         Issues a notification to the user when they've exceeded the
         budget limit.
