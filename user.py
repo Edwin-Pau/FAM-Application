@@ -11,18 +11,12 @@ from transaction import TransactionManager
 
 class User:
     """
-    An object of type User.
-
-    Attributes
-    ----------
-
-    Static Methods
-    --------------
-
-    Methods
-    -------
+    An object of type User. An object of User represents the user
+    that the F.A.M. application is being used for. It is composed
+    of various objects that represent different attributes
+    of the user, such as the user's name, age, budgets, transactions,
+    accounts, and the user type (via the TransactionManager).
     """
-
     user_registration_fields = {
         "name": "Name: ",
         "age": "Age: ",
@@ -50,6 +44,12 @@ class User:
                  account: Account, budget_manager: BudgetManager):
         """
         Initializes a User object.
+
+        :param name: a string for the user's name
+        :param age: a n int for the user's age
+        :param tx_manager: a TransactionManager object
+        :param account: an Account object
+        :param budget_manager: a BudgetManager object
         """
         self.name = name
         self.age = age
@@ -59,13 +59,17 @@ class User:
 
     def __str__(self) -> str:
         """
-        Initializes a User object.
+        A string magic method to return a string representation of the
+        User object, which includes all its data and details.
+
+        :return: a str representing the Budget object.
         """
-        formatted_str = f"\nName: {self.name}"\
-                        f"\nAge: {self.age}"\
+        formatted_str = f"\nName: {self.name}" \
+                        f"\nAge: {self.age}" \
                         f"\nAccount: {self.account}" \
                         f"\nTx Manager: {self.tx_manager}" \
                         f"\nBudget Manager: {self.budget_manager}"
+
         return formatted_str
 
     @classmethod
@@ -87,11 +91,12 @@ class User:
     @classmethod
     def _convert_user_data_types(cls, user_data: dict) -> dict:
         """
-        On application startup, the user must register their child's
-        financial details. Displays and prompts the user to enter
-        all the required information for registering a user.
+        Converts the raw user data input strings into the appropriate
+        data types used by other classes in the application.
 
-        :return: a dict with the user registration data
+        :param user_data: a dict with the raw user registration data
+
+        :return: a dict with converted user registration data
         """
         converted_user_data = user_data
 
@@ -112,14 +117,16 @@ class User:
     @staticmethod
     def generate_new_user(user_data: dict) -> User:
         """
-        Initialize the User attribute of this object. Prompts the user
-        for all the details.
+        Generates a new User object using a dictionary of user
+        registration data.
+
+        :param user_data: a dict with the raw user registration data
 
         :return: User, an object of type User.
         """
         user_data = User._convert_user_data_types(user_data)
         name = user_data["name"]
-        age = int(user_data["age"])
+        age = user_data["age"]
         tx_mgr = TransactionManager.generate_tx_mgr(user_data)
         bank_account = BankAccount.generate_bank_account(user_data)
         budget_mgr = BudgetManager.generate_budget_mgr(user_data)
@@ -127,7 +134,11 @@ class User:
 
         return new_user
 
-    def update_lock_status(self):
+    def update_lock_status(self) -> None:
+        """
+        Updates the lock status for the budget categories that belong
+        to this user's BudgetManager.
+        """
         lock_threshold = self.tx_manager.lock_threshold
         num_categories_locked = 0
         for budget in self.budget_manager:
@@ -141,18 +152,36 @@ class User:
 
         self._update_account_lock_status(num_categories_locked)
 
-    def _update_account_lock_status(self, num_categories_locked: int):
+    def _update_account_lock_status(self, num_categories_locked: int) -> None:
+        """
+        Updates the lock status for the user's account if it exceeds the
+        allowable categories locked.
+
+        :param num_categories_locked: an int
+        """
         max_locked_budgets = self.tx_manager.max_locked_budgets
         if max_locked_budgets and num_categories_locked >= max_locked_budgets:
             self.account.locked_status = True
-            self.account.issue_locked_warning()
+            BankAccount.issue_locked_warning()
 
-    def check_and_issue_user_warnings(self, current_budget: Budget):
+    def check_and_issue_user_warnings(self, current_budget: Budget) -> None:
+        """
+        Checks and issues all relevant user warnings, notifications,
+        and locked status.
+
+        :param current_budget: a Budget object
+        """
         warning_threshold = self.tx_manager.warning_threshold
         persistent_warning = self.tx_manager.persistent_warning
+
+        current_budget_threshold = current_budget.amount_spent \
+            / current_budget.amount_total
+
         budget_category_str = current_budget.budget_category.value
+
         issue_warning = False
         issue_notification = False
+        issue_locked_status = False
 
         if persistent_warning:
             for budget in self.budget_manager:
@@ -161,14 +190,20 @@ class User:
                 if budget_threshold > warning_threshold:
                     issue_warning = True
 
-        if current_budget.locked_status:
+        if current_budget_threshold / warning_threshold:
             issue_warning = True
 
-        if current_budget.amount_spent / current_budget.amount_total > 1:
+        if current_budget_threshold > 1:
             issue_notification = True
+
+        if current_budget.locked_status:
+            issue_locked_status = True
 
         if issue_warning:
             self.tx_manager.issue_warning(budget_category_str)
 
         if issue_notification:
             self.tx_manager.issue_notification(budget_category_str)
+
+        if issue_locked_status:
+            BudgetManager.issue_locked_status(budget_category_str)

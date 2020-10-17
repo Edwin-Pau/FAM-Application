@@ -1,72 +1,48 @@
 #!/usr/bin/env python3
+
 """
 This module contains the Driver class and serves as the entry point
 for the Family Appointed Moderator application.
 """
 from menu import Menu
-from transaction import TransactionManager, Transaction
+from transaction import Transaction
 from budget import BudgetManager, Budget
 from user import User
 from rich import print
 
-USER_TEST_DATA = {
-    "name": "Edwin Pau",
-    "age": "31",
-    "user_type": "3",
-    "bank_account_number": "A01074676",
-    "bank_name": "TD Bank",
-    "bank_balance": "5000",
-    "budget_games_and_entertainment": "200",
-    "budget_clothing_and_accessories": "200",
-    "budget_eating_out": "500",
-    "budget_miscellaneous": "100"
-}
-"""
-Modifiable global variable which is used for registering a test user
-for the load_test_data method in the Driver class.
-"""
-
 
 class Driver:
     """
-    An object of type Driver is responsible for running the Lab 2 Card
-    Simulation program. It presents a list of menu options to the user
-    that will let the user add, remove, search, access and print the
-    cards in their wallet.
+    An object of type Driver is responsible for running the F.A.M.
+    application. It presents a list of menu options to the user
+    that will let the user interact with the various features of
+    the F.A.M. application for moderating their budgets and spendings.
 
     Acts as the middleman for all the various modules. Responsible for
     the application's flow of control and passing the flow of control
     to the right class based on user input.
-
-    Attributes
-    ----------
-    user: User
-        An object of type User that this application is running for.
-    tx_mgr: TransactionManager
-        An object of type TransactionManager that records transactions.
-    menu_dict: a dict of Menu objects
-        A dictionary of String / Menu objects as the key / value pairs.
-
-    Static Methods
-    --------------
-    setup()
-        Initializes the User attribute of this Driver object.
-    get_menu_choice()
-        Displays the menu choices to the user and prompts the user to
-        make a selection.
-
-    Methods
-    -------
-    __init__()
-        The initialization method for the Driver class.
-    start()
-        Begins the main functionalities of the F.A.M. application.
     """
+    user_test_data = {
+        "name": "Edwin Pau",
+        "age": "31",
+        "user_type": "3",
+        "bank_account_number": "A01074676",
+        "bank_name": "TD Bank",
+        "bank_balance": "5000",
+        "budget_games_and_entertainment": "200",
+        "budget_clothing_and_accessories": "200",
+        "budget_eating_out": "500",
+        "budget_miscellaneous": "100"
+    }
+    """
+    Modifiable variable which is used for registering a test user
+    for the load_test_data method in the Driver class.
+    """
+
     def __init__(self):
         """
-        Initialize a Driver object. The initialization method calls
-        the static setup methods for setting up each object that belongs
-        to this instance of the Driver class.
+        Initialize a Driver object. The user object that belongs to the
+        driver is created when the start method is called.
         """
         self.user = None
 
@@ -74,22 +50,30 @@ class Driver:
     def load_test_user() -> User:
         """
         Initializes and returns an object representing a test user with
-        pre-set hardcoded budgets. This is a helper function to speed
-        up development.
+        pre-set hardcoded settings and budgets. This is a helper
+        function designed to speed up development. Uses the global
+        variable dictionary USER_TEST_DATA for generating a new user.
 
         :return: User, an object of type User
         """
-        new_user = User.generate_new_user(USER_TEST_DATA)
+        new_user = User.generate_new_user(Driver.user_test_data)
         return new_user
 
     def start(self) -> None:
+        """
+        Entry method to start up the F.A.M. application. This method
+        starts up the startup menu for registering a user, then proceeds
+        to direct the flow of control to the main menu prompts.
+        """
         self.execute_startup_menu()
         self.execute_main_menu()
 
     def execute_startup_menu(self) -> None:
         """
-        Initialize the User attribute of this object. Prompts the user
-        for all the details.
+        Prompts the user to choose between creating a new user or
+        loading the test user account. Creates a new user based on user
+        input. This function sets this Driver's user account to the new
+        User that is created.
         """
         new_user = None
         user_choice = Menu.prompt_startup_menu()
@@ -107,8 +91,9 @@ class Driver:
 
     def execute_main_menu(self) -> None:
         """
-        Initialize the User attribute of this object. Prompts the user
-        for all the details.
+        Prompts the user with the main menu choices. Based on the user
+        input, the function will direct the flow of control to the
+        appropriate driver method to handle the logic for that function.
         """
         user_choice = None
         while user_choice != 5:
@@ -125,17 +110,27 @@ class Driver:
                 print("Exiting F.A.M. application...")
                 exit(1)
 
-    def view_budgets(self):
+    def view_budgets(self) -> None:
         """
-        Prompt the user
+        Prompts the user with a budget they want to view. The budget
+        details for each budget category in the budget manager is then
+        printed out to the user.
         """
         Menu.prompt_view_budgets()
         for budget in self.user.budget_manager:
             print(f"{budget}\n")
 
-    def record_transaction(self):
+    def record_transaction(self) -> None:
         """
-        Prompt the user
+        Prompts the user with the required input for recording a new
+        transaction record. The new transaction is created if it is
+        validated by the system checks.
+
+        Notifies the user if the transaction failed or succeeded.
+        The system refreshes the state of all the Budget objects in the
+        BudgetManager and the Transaction objects in the
+        TransactionManager. Finally it issues any notifications or
+        warnings to the user.
         """
         Menu.prompt_record_transaction()
         tx_data = Transaction.prompt_record_tx()
@@ -171,9 +166,12 @@ class Driver:
 
         self.user.check_and_issue_user_warnings(budget)
 
-    def view_transactions(self):
+    def view_transactions(self) -> None:
         """
-        Prompt the user
+        Prompts the user with the option to view transactions for
+        an individual budget category. Once a budget category is
+        selected, it prints out all the transactions that belong
+        in that budget category.
         """
         user_choice = Menu.prompt_view_transactions()
         if user_choice == 5:
@@ -187,9 +185,10 @@ class Driver:
             if tx.budget_category == user_choice:
                 print(f"\n{tx}")
 
-    def view_bank_account_details(self):
+    def view_bank_account_details(self) -> None:
         """
-        Prompt the user
+        Prints out the user's bank account details, including all the
+        transactions conducted, as well as a spending summary.
         """
         Menu.prompt_view_bank_account_details()
         print("Bank Account Details:")
@@ -210,12 +209,22 @@ class Driver:
 
     def validate_transaction_record(self, new_tx: Transaction,
                                     budget: Budget) -> (bool, str):
+        """
+        This method is used to validate if a transaction can be
+        successfully recorded for the user, based on his budget and
+        account restrictions.
+
+        :param new_tx: a Transaction object.
+        :param budget: a Budget object.
+
+        :return: a tuple of (a bool for validation, a str for error msg).
+        """
         budget_threshold = self.user.tx_manager.lock_threshold
         validated_tx = True
         error_msg = ""
 
         # Perform the various checks
-        # Can refactor in the future using chain of responsibility
+        # TODO Can refactor in the future using chain of responsibility
         if self.user.account.locked_status:
             error_msg = error_msg + "  The account has been locked out " \
                                     "completely for exceeding the budgets " \
